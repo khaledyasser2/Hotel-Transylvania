@@ -4,7 +4,7 @@ class Customer_Account:
     reservationNums = []
     name=""
     password=""
-    username="yamom"
+    username=""
 
     def __init__(self,name,password,username):
         self.name=name
