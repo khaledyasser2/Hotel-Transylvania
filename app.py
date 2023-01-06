@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, Response
+from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -23,6 +23,14 @@ def index():
 
 @app.route("/register")
 def register():
+    if request.method == "POST":
+        # email = request.form["email"]
+        # name = request.form["name"]
+        # password = request.form["password"]
+        # lgin = Login_Manager(email=email, password=password, name=name)
+        # db.session.add(lgin)
+        # db.session.commit()
+        return redirect("/book")
     return render_template("Register.html")
 
 @app.route("/book")
