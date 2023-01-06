@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -19,6 +19,10 @@ with app.app_context():
 @app.route("/", methods=["POST", "GET"])
 def login():
     if request.method == "POST":
+        email = request.form["email"]
+        name = request.form["name"]
+        password = request.form["password"]
+        lgin = Login_Manager(email=email, password=password, name=name)
         return redirect("/book")
     return render_template("Login.html")
 
@@ -29,10 +33,16 @@ def register():
         name = request.form["name"]
         password = request.form["password"]
         lgin = Login_Manager(email=email, password=password, name=name)
-        db.session.add(lgin)
-        db.session.commit()
+        try:
+            db.session.add(lgin)
+            db.session.commit()
+        except:
+            print("There is already an account with that email")
+            return redirect("/")
         return redirect("/book")
-    return render_template("Register.html")
+    else:
+        #print(Login_Manager.query.order_by(Login_Manager.name))
+        return render_template("Register.html")
 
 @app.route("/book", methods=["POST", "GET"])
 def book():
