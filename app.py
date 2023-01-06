@@ -23,5 +23,13 @@ def index():
 def register():
     return render_template("Register.html")
 
+@app.route("/book")
+def book():
+    return render_template("Booking.html")
+
+@app.route("/pay")
+def pay():
+    return render_template("Payment.html")
+
 if __name__=="__main__":
     app.run(debug=True)
