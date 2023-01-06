@@ -3,17 +3,19 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///accountTracker.db'
+
 db=SQLAlchemy(app)
 
 class Login_Manager(db.Model):
     email = db.Column(db.String, primary_key=True)
-    passwrod = db.Column(db.String, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    email=db.Column(db.String, nullable=False)
 
     def __repr__(self):
         return "<Task %r>" % self.id
 
-with app.app_context():
-   db.create_all()
+# with app.app_context():
+#    db.create_all()
 
 @app.route("/", methods=["POST", "GET"])
 def login():
@@ -24,6 +26,12 @@ def login():
 @app.route("/register", methods=["POST", "GET"])
 def register():
     if request.method == "POST":
+        email = request.form["email"]
+        name = request.form["name"]
+        password = request.form["password"]
+        lgin = Login_Manager(email=email, password=password, name=name)
+        db.session.add(lgin)
+        db.session.commit()
         return redirect("/book")
     return render_template("Register.html")
 
