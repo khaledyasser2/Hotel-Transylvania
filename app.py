@@ -7,7 +7,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///accountTracker.db'
 db=SQLAlchemy(app)
 #hi
 class Login_Manager(db.Model):
-    email = db.Column(db.String, primary_key=True)
+    name = db.Column(db.String, primary_key=True)
     password = db.Column(db.String, nullable=False)
     email=db.Column(db.String, nullable=False)
 
