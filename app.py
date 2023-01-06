@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, Response
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -15,25 +15,19 @@ class Login_Manager(db.Model):
 with app.app_context():
    db.create_all()
 
-@app.route("/", methods=["POST", "GET"])
-def login():
-    if request.method == "POST":
-        return redirect("/book")
+@app.route("/")
+def index():
     return render_template("Login.html")
 
-@app.route("/register", methods=["POST", "GET"])
+@app.route("/register")
 def register():
-    if request.method == "POST":
-        return redirect("/book")
     return render_template("Register.html")
 
-@app.route("/book", methods=["POST", "GET"])
+@app.route("/book")
 def book():
-    if request.method == "POST":
-        return redirect("/pay")
     return render_template("Booking.html")
 
-@app.route("/pay", methods=["POST", "GET"])
+@app.route("/pay")
 def pay():
     return render_template("Payment.html")
 
