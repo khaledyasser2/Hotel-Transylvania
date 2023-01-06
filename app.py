@@ -20,10 +20,12 @@ with app.app_context():
 def login():
     if request.method == "POST":
         email = request.form["email"]
-        name = request.form["name"]
-        password = request.form["password"]
-        lgin = Login_Manager(email=email, password=password, name=name)
-        return redirect("/book")
+        print(email)
+        exists = db.session.query(Login_Manager.email).filter(Login_Manager.email==email).first() is not None
+        if exists:
+            return redirect("/book")
+        else:
+            return redirect("/register")
     return render_template("Login.html")
 
 @app.route("/register", methods=["POST", "GET"])
