@@ -26,12 +26,12 @@ def login():
 @app.route("/register", methods=["POST", "GET"])
 def register():
     if request.method == "POST":
-        email = request.form["email"]
-        name = request.form["name"]
-        password = request.form["password"]
-        lgin = Login_Manager(email=email, password=password, name=name)
-        db.session.add(lgin)
-        db.session.commit()
+        # email = request.form["email"]
+        # name = request.form["name"]
+        # password = request.form["password"]
+        # lgin = Login_Manager(email=email, password=password, name=name)
+        # db.session.add(lgin)
+        # db.session.commit()
         return redirect("/book")
     return render_template("Register.html")
 
