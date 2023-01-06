@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, Responsepip
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -15,6 +15,10 @@ class Todo(db.Model):
 @app.route("/")
 def index():
     return render_template("Login.html")
+
+@app.route("/register")
+def register():
+    return render_template("Register.html")
 
 if __name__=="__main__":
     app.run(debug=True)
