@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///accountTracker.db'
 db=SQLAlchemy(app)
-
+#hi
 class Login_Manager(db.Model):
     email = db.Column(db.String, primary_key=True)
     passwrod = db.Column(db.String, nullable=False)
