@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
  <head>
-  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/Login.css') }}">
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/Login.css') }}">
    <h1 id="title">Welcome back!</h1>
    <p id="description">Please login below</p>
  </head>
@@ -11,7 +11,7 @@
     <label id="password-label">Password<input id="password" type="text" max="12" min="0" placeholder="Enter Password"/></label>
     <p>First time user?<a href="register"> Sign up!</a></p>
     <p>Forgot password? Too bad!</p>
-    <input type="submit" id="submit"></input>
+    <input type="submit" id="submit" value="Login"></input>
   </form>
  </body>
 </html>
