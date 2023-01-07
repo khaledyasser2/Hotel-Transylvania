@@ -13,8 +13,15 @@ class Login_Manager(db.Model):
     def __repr__(self):
         return "<Task %r>" % self.id
 
+class Reservations_Manager(db.Model):
+    DateTaken = db.Column(db.String, primary_key=True)
+    RoomNum = db.Column(db.Integer, nullable=False)
+
+    def __repr__(self):
+        return "<Task %r>" % self.RoomNum
+
 with app.app_context():
-   db.create_all()
+    db.create_all()
 
 @app.route("/", methods=["POST", "GET"])
 def login():
@@ -49,6 +56,14 @@ def register():
 @app.route("/book", methods=["POST", "GET"])
 def book():
     if request.method == "POST":
+        date = request.form["date"]
+        room = request.form["room"]
+        booking = Reservations_Manager(DateTaken=date, RoomNum=room)
+        try:
+            db.session.add(booking)
+            db.session.commit()
+        except:
+            return redirect("/book")
         return redirect("/pay")
     return render_template("Booking.html")
 
