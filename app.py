@@ -5,6 +5,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///accountTracker.db'
 db=SQLAlchemy(app)
 staffPass="joejoesbizzareadventure"
+currName=""
 
 class Login_Manager(db.Model):
     email = db.Column(db.String, primary_key=True)
@@ -34,8 +35,11 @@ def login():
     if request.method == "POST":
         email = request.form["email"]
         print(email)
-        exists = db.session.query(Login_Manager.email).filter(Login_Manager.email==email).first() is not None
-        if exists:
+        user = db.session.query(Login_Manager.email).filter(Login_Manager.email==email).first()
+        print(user)
+        if user is not None:
+            currName=user.name
+            print(currName)
             return redirect("/book")
         else:
             return redirect("/register")
@@ -55,9 +59,9 @@ def staff():
 def register():
     if request.method == "POST":
         email = request.form["email"]
-        name = request.form["name"]
+        currName = request.form["name"]
         password = request.form["password"]
-        lgin = Login_Manager(email=email, password=password, name=name)
+        lgin = Login_Manager(email=email, password=password, name=currName)
         try:
             db.session.add(lgin)
             db.session.commit()
