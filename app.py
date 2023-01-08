@@ -51,13 +51,16 @@ def staff():
     if request.method == "POST":
         password= request.form["password"]
         if password == staffPass:
-            return redirect("/checkout")
+            if request.form["submit"] == "Checkin":
+                return redirect("/checkin")
+            else:
+                return redirect("/checkout")
         else:
             return redirect("/staff")
     return render_template("Staff.html")
 
 @app.route("/checkout", methods=["POST", "GET"])
-def Checkout():
+def checkout():
     if request.method == "POST":
         name = request.form["name"]
         roomNum = request.form["room"]
@@ -65,14 +68,25 @@ def Checkout():
         print(roomNum)
         user = Reservations_Manager.query.filter(Reservations_Manager.RoomNum==int(roomNum), 
         Reservations_Manager.Name==name).delete()
-        if user is not None:
+        print(user)
+        if user != 0:
             db.session.commit()
-            return redirect("/checkout")
+            return render_template("Complete.html")
+        else:
+            return render_template("Incomplete.html")
     return render_template("Checkout.html")
 
 @app.route("/checkin", methods=["POST", "GET"])
-def Checkin():
-    
+def checkin():
+    if request.method=="POST":
+        name = request.form["name"]
+        resNum = request.form["reservation"]
+        user = Reservations_Manager.query.filter(Reservations_Manager.ReservationNum==int(resNum), 
+        Reservations_Manager.Name==name).first()
+        if user is not None:
+            return render_template("Complete.html")
+        else:
+            return render_template("Incomplete.html")
     return render_template("Checkin.html")
 
 @app.route("/register", methods=["POST", "GET"])
