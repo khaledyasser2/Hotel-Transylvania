@@ -2,13 +2,13 @@
 <html>
  <head>
   <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/Booking.css') }}">
-  <h1 id="title">Check in page</h1>
+  <h1 id="title">Check out page</h1>
  </head>
  <body>
   <form id="survey-form" method="POST">
     <label for="room">Select a room:</label>
     <label id="name-label">Name<input name="name" id="email" type="text" required max="12" placeholder="Enter Name"/></label>
-    <label id="room-label">Registration Number<input name="registration" id="reserve" type="number" placeholder="Enter Registration Number" required/></label>
+    <label id="room-label">Room<input name="room" id="reserve" type="number" placeholder="Enter Room Number" required/></label>
     <input type="submit" id="submit"></input>
   </form>
  </body>
