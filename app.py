@@ -5,7 +5,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Database.db'
 db=SQLAlchemy(app)
 staffPass="joejoesbizzareadventure"
-currName="joff"
+currName=None
 
 class Login_Manager(db.Model):
     email = db.Column(db.String, primary_key=True)
@@ -33,14 +33,14 @@ with app.app_context():
 
 @app.route("/", methods=["POST", "GET"])
 def login():
+    global currName
     if request.method == "POST":
         email = request.form["email"]
         print(email)
         user = db.session.query(Login_Manager.email, Login_Manager.name).filter(Login_Manager.email==email).first()
         print(user)
         if user is not None:
-            print(dict(user))
-            print(currName)
+            currName=dict(user)["name"]
             return redirect("/book")
         else:
             return redirect("/register")
@@ -60,19 +60,23 @@ def staff():
 def Checkin():
     if request.method == "POST":
         name = request.form["name"]
-        room = request.form["room"]
+        reservationNum = request.form["reserve"]
+
+        
     return render_template("Checkin.html")
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
+    global currName
     if request.method == "POST":
         email = request.form["email"]
-        currName = request.form["name"]
+        name = request.form["name"]
         password = request.form["password"]
-        lgin = Login_Manager(email=email, password=password, name=currName)
+        lgin = Login_Manager(email=email, password=password, name=name)
         try:
             db.session.add(lgin)
             db.session.commit()
+            currName=name
         except:
             print("There is already an account with that email")
             return redirect("/")
@@ -83,16 +87,19 @@ def register():
 
 @app.route("/book", methods=["POST", "GET"])
 def book():
+    global currName
     if request.method == "POST":
         date = request.form["date"]
         room = request.form["room"]
-        booking = Reservations_Manager(DateTaken=date, RoomNum=room, ReservationNum=generateReservationNum(int(room)))
-        try:
-            db.session.add(booking)
-            db.session.commit()
-        except:
-            return redirect("/book")
+        print(currName)
+        booking = Reservations_Manager(DateTaken=date, RoomNum=room, ReservationNum=generateReservationNum(int(room)), Name=currName)
+        #try:
+        db.session.add(booking)
+        db.session.commit()
         return redirect("/pay")
+        # except:
+        #     return redirect("/book")
+        
     return render_template("Booking.html")
 
 @app.route("/pay", methods=["POST", "GET"])
