@@ -17,7 +17,7 @@ class Login_Manager(db.Model):
 
 class Reservations_Manager(db.Model):
     DateTaken = db.Column(db.String, primary_key=True)
-    RoomNum = db.Column(db.Integer, nullable=False)
+    RoomNum = db.Column(db.Integer, primary_key=True)
     ReservationNum=db.Column(db.Integer, nullable=False)
     Name = db.Column(db.String, nullable=False)
 
@@ -60,9 +60,14 @@ def staff():
 def Checkin():
     if request.method == "POST":
         name = request.form["name"]
-        reservationNum = request.form["reserve"]
-
-        
+        roomNum = request.form["room"]
+        print(name)
+        print(roomNum)
+        user = Reservations_Manager.query.filter(Reservations_Manager.RoomNum==int(roomNum), 
+        Reservations_Manager.Name==name).delete()
+¥        if user is not None:
+            db.session.commit()
+            return redirect("/checkin")
     return render_template("Checkin.html")
 
 @app.route("/register", methods=["POST", "GET"])
@@ -91,14 +96,14 @@ def book():
     if request.method == "POST":
         date = request.form["date"]
         room = request.form["room"]
-        print(currName)
         booking = Reservations_Manager(DateTaken=date, RoomNum=room, ReservationNum=generateReservationNum(int(room)), Name=currName)
-        #try:
-        db.session.add(booking)
-        db.session.commit()
-        return redirect("/pay")
-        # except:
-        #     return redirect("/book")
+        try:
+            db.session.add(booking)
+            db.session.commit()
+            return redirect("/pay")
+        except Exception as e:
+            print(e)
+            return redirect("/book")
         
     return render_template("Booking.html")
 
