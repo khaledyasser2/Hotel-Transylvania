@@ -2,10 +2,10 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///accountTracker.db'
+app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Database.db'
 db=SQLAlchemy(app)
 staffPass="joejoesbizzareadventure"
-currName=""
+currName="joff"
 
 class Login_Manager(db.Model):
     email = db.Column(db.String, primary_key=True)
@@ -19,6 +19,7 @@ class Reservations_Manager(db.Model):
     DateTaken = db.Column(db.String, primary_key=True)
     RoomNum = db.Column(db.Integer, nullable=False)
     ReservationNum=db.Column(db.Integer, nullable=False)
+    Name = db.Column(db.String, nullable=False)
 
     def __repr__(self):
         return "<Task %r>" % self.RoomNum
@@ -38,7 +39,7 @@ def login():
         user = db.session.query(Login_Manager.email).filter(Login_Manager.email==email).first()
         print(user)
         if user is not None:
-            currName=user.name
+            print(dict(user))
             print(currName)
             return redirect("/book")
         else:
@@ -50,10 +51,17 @@ def staff():
     if request.method == "POST":
         password= request.form["password"]
         if password == staffPass:
-            return render_template("Payment.html")
+            return redirect("/checkin")
         else:
             return redirect("/staff")
     return render_template("Staff.html")
+
+@app.route("/checkin", methods=["POST", "GET"])
+def Checkin():
+    if request.method == "POST":
+        name = request.form["name"]
+        room = request.form["room"]
+    return render_template("Checkin.html")
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
