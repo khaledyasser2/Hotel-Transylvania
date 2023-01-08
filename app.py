@@ -36,7 +36,7 @@ def login():
     if request.method == "POST":
         email = request.form["email"]
         print(email)
-        user = db.session.query(Login_Manager.email).filter(Login_Manager.email==email).first()
+        user = db.session.query(Login_Manager.email, Login_Manager.name).filter(Login_Manager.email==email).first()
         print(user)
         if user is not None:
             print(dict(user))
