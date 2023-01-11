@@ -112,6 +112,9 @@ def register():
 @app.route("/book", methods=["POST", "GET"])
 def book():
     global currName
+    print(currName)
+    if currName is None:
+        return redirect("/")
     if request.method == "POST":
         date = request.form["date"]
         room = request.form["room"]
