@@ -6,6 +6,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Database.db'
 db=SQLAlchemy(app)
 staffPass="joejoesbizzareadventure"
 currName=None
+currRegNum=None
 
 class Login_Manager(db.Model):
     email = db.Column(db.String, primary_key=True)
@@ -112,13 +113,15 @@ def register():
 @app.route("/book", methods=["POST", "GET"])
 def book():
     global currName
+    global currRegNum
     print(currName)
     if currName is None:
         return redirect("/")
     if request.method == "POST":
         date = request.form["date"]
         room = request.form["room"]
-        booking = Reservations_Manager(DateTaken=date, RoomNum=room, ReservationNum=generateReservationNum(int(room)), Name=currName)
+        currRegNum=generateReservationNum(int(room))
+        booking = Reservations_Manager(DateTaken=date, RoomNum=room, ReservationNum=currRegNum, Name=currName)
         try:
             db.session.add(booking)
             db.session.commit()
@@ -131,7 +134,9 @@ def book():
 
 @app.route("/pay", methods=["POST", "GET"])
 def pay():
-    return render_template("Payment.html")
+    if currRegNum is not None:
+        return render_template("Payment.html", regNum=currRegNum)
+    return "Oops"
 
 if __name__=="__main__":
     app.run(debug=True)
