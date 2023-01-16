@@ -28,7 +28,6 @@ class controller:
         user = db.session.query(Login_Manager.email, Login_Manager.name).filter(Login_Manager.email==email).first()
         return user
     def generateReservationNum(roomNum):
-        #random ass way to generate reservation number from room number. Can change later
         return (roomNum*2+3)*4
     def generateFee(roomNum):
         return ((int(roomNum)-5)*12+3)/4
