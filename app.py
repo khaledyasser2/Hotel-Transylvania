@@ -5,8 +5,6 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Database.db'
 db=SQLAlchemy(app)
 staffPass="joejoesbizzareadventure"
-currName=None
-currRegNum=None
 
 class Login_Manager(db.Model):
     email = db.Column(db.String, primary_key=True)
@@ -26,15 +24,25 @@ class Reservations_Manager(db.Model):
         return "<Task %r>" % self.RoomNum
 
 class controller:
-    def findGuyWithEmail():
-        pass
-
-def generateReservationNum(roomNum):
-    #random ass way to generate reservation number from room number. Can change later
-    return (roomNum*2+3)*4
-
-def generateFee(roomNum):
-    return ((int(roomNum)-5)*12+3)/4
+    def findGuyWithEmail(email):
+        user = db.session.query(Login_Manager.email, Login_Manager.name).filter(Login_Manager.email==email).first()
+        return user
+    def generateReservationNum(roomNum):
+        #random ass way to generate reservation number from room number. Can change later
+        return (roomNum*2+3)*4
+    def generateFee(roomNum):
+        return ((int(roomNum)-5)*12+3)/4
+    def checkInfoCheckout(name, roomNum):
+        user = Reservations_Manager.query.filter(Reservations_Manager.RoomNum==int(roomNum), 
+        Reservations_Manager.Name==name).delete()
+        return user
+    def checkInfoCheckin(name, resNum):
+        user = Reservations_Manager.query.filter(Reservations_Manager.ReservationNum==int(resNum), 
+        Reservations_Manager.Name==name).first()
+        return user
+    def book(date, room, currRegNum, currName):
+        booking = Reservations_Manager(DateTaken=date, RoomNum=room, ReservationNum=currRegNum, Name=currName)
+        return booking
 
 with app.app_context():
     db.create_all()
@@ -44,7 +52,7 @@ def login():
     if request.method == "POST":
         email = request.form["email"]
         print(email)
-        user = db.session.query(Login_Manager.email, Login_Manager.name).filter(Login_Manager.email==email).first()
+        user = controller.findGuyWithEmail(email)
         print(user)
         if user is not None:
             resp = make_response(redirect("/book"))
@@ -74,12 +82,11 @@ def checkout():
     if request.method == "POST":
         name = request.form["name"]
         roomNum = request.form["room"]
-        user = Reservations_Manager.query.filter(Reservations_Manager.RoomNum==int(roomNum), 
-        Reservations_Manager.Name==name).delete()
+        user = controller.checkInfoCheckout(name, roomNum)
         print(user)
         if user != 0:
             db.session.commit()
-            return render_template("Complete.html", fee=generateFee(roomNum))
+            return render_template("Complete.html", fee=controller.generateFee(roomNum))
         else:
             return render_template("Incomplete.html")
     return render_template("Checkout.html")
@@ -89,10 +96,9 @@ def checkin():
     if request.method=="POST":
         name = request.form["name"]
         resNum = request.form["reservation"]
-        user = Reservations_Manager.query.filter(Reservations_Manager.ReservationNum==int(resNum), 
-        Reservations_Manager.Name==name).first()
+        user = controller.checkInfoCheckin(name, resNum)
         if user is not None:
-            return render_template("Complete.html")
+            return render_template("CompleteCheckin.html")
         else:
             return render_template("Incomplete.html")
     return render_template("Checkin.html")
@@ -123,9 +129,9 @@ def book():
     if request.method == "POST":
         date = request.form["date"]
         room = request.form["room"]
-        currRegNum=generateReservationNum(int(room))
+        currRegNum=controller.generateReservationNum(int(room))
         currName=request.cookies.get("currName")
-        booking = Reservations_Manager(DateTaken=date, RoomNum=room, ReservationNum=currRegNum, Name=currName)
+        booking = controller.book(date, room, currRegNum, currName)
         try:
             db.session.add(booking)
             db.session.commit()
