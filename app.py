@@ -34,7 +34,7 @@ def generateReservationNum(roomNum):
     return (roomNum*2+3)*4
 
 def generateFee(roomNum):
-    return ((roomNum-5)*12+3)/4
+    return ((int(roomNum)-5)*12+3)/4
 
 with app.app_context():
     db.create_all()
@@ -74,17 +74,15 @@ def checkout():
     if request.method == "POST":
         name = request.form["name"]
         roomNum = request.form["room"]
-        print(name)
-        print(roomNum)
         user = Reservations_Manager.query.filter(Reservations_Manager.RoomNum==int(roomNum), 
         Reservations_Manager.Name==name).delete()
         print(user)
         if user != 0:
             db.session.commit()
-            return render_template("Complete.html")
+            return render_template("Complete.html", fee=generateFee(roomNum))
         else:
             return render_template("Incomplete.html")
-    return render_template("Checkout.html", fee=generateFee(roomNum))
+    return render_template("Checkout.html")
 
 @app.route("/checkin", methods=["POST", "GET"])
 def checkin():
