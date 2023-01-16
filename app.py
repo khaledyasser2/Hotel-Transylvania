@@ -83,7 +83,6 @@ def checkout():
         name = request.form["name"]
         roomNum = request.form["room"]
         user = controller.checkInfoCheckout(name, roomNum)
-        print(user)
         if user != 0:
             db.session.commit()
             return render_template("Complete.html", fee=controller.generateFee(roomNum))
