@@ -24,7 +24,7 @@ class Reservations_Manager(db.Model):
         return "<Task %r>" % self.RoomNum
 
 class controller:
-    def findGuyWithEmail(email):
+    def findUser(email):
         user = db.session.query(Login_Manager.email, Login_Manager.name).filter(Login_Manager.email==email).first()
         return user
     def generateReservationNum(roomNum):
@@ -52,7 +52,7 @@ def login():
     if request.method == "POST":
         email = request.form["email"]
         print(email)
-        user = controller.findGuyWithEmail(email)
+        user = controller.findUser(email)
         print(user)
         if user is not None:
             resp = make_response(redirect("/book"))
