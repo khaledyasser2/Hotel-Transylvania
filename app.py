@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, make_response
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -25,24 +25,33 @@ class Reservations_Manager(db.Model):
     def __repr__(self):
         return "<Task %r>" % self.RoomNum
 
+class controller:
+    def findGuyWithEmail():
+        pass
+
 def generateReservationNum(roomNum):
     #random ass way to generate reservation number from room number. Can change later
     return (roomNum*2+3)*4
+
+def generateFee(roomNum):
+    return ((roomNum-5)*12+3)/4
 
 with app.app_context():
     db.create_all()
 
 @app.route("/", methods=["POST", "GET"])
 def login():
-    global currName
     if request.method == "POST":
         email = request.form["email"]
         print(email)
         user = db.session.query(Login_Manager.email, Login_Manager.name).filter(Login_Manager.email==email).first()
         print(user)
         if user is not None:
-            currName=dict(user)["name"]
-            return redirect("/book")
+            resp = make_response(redirect("/book"))
+            resp.set_cookie("currName", dict(user)["name"])
+            print("hey")
+            #currName=
+            return resp
         else:
             return redirect("/register")
     return render_template("Login.html")
@@ -75,7 +84,7 @@ def checkout():
             return render_template("Complete.html")
         else:
             return render_template("Incomplete.html")
-    return render_template("Checkout.html")
+    return render_template("Checkout.html", fee=generateFee(roomNum))
 
 @app.route("/checkin", methods=["POST", "GET"])
 def checkin():
@@ -92,7 +101,6 @@ def checkin():
 
 @app.route("/register", methods=["POST", "GET"])
 def register():
-    global currName
     if request.method == "POST":
         email = request.form["email"]
         name = request.form["name"]
@@ -101,42 +109,42 @@ def register():
         try:
             db.session.add(lgin)
             db.session.commit()
-            currName=name
         except:
             print("There is already an account with that email")
             return redirect("/")
-        return redirect("/book")
+        resp = make_response(redirect("/book"))
+        resp.set_cookie("currName", name)
+        return resp
     else:
         #print(Login_Manager.query.order_by(Login_Manager.name))
         return render_template("Register.html")
 
 @app.route("/book", methods=["POST", "GET"])
 def book():
-    global currName
-    global currRegNum
-    print(currName)
-    if currName is None:
-        return redirect("/")
+    print(request.cookies.get("currName"))
     if request.method == "POST":
         date = request.form["date"]
         room = request.form["room"]
         currRegNum=generateReservationNum(int(room))
+        currName=request.cookies.get("currName")
         booking = Reservations_Manager(DateTaken=date, RoomNum=room, ReservationNum=currRegNum, Name=currName)
         try:
             db.session.add(booking)
             db.session.commit()
-            return redirect("/pay")
+
         except Exception as e:
             print(e)
             return redirect("/book")
-        
+        resp = make_response(redirect("/pay"))
+        resp.set_cookie("currRegNum", str(currRegNum))
+        return resp
     return render_template("Booking.html")
 
 @app.route("/pay", methods=["POST", "GET"])
 def pay():
+    currRegNum = request.cookies.get("currRegNum")
     if currRegNum is not None:
         return render_template("Payment.html", regNum=currRegNum)
-    return "Oops"
 
 if __name__=="__main__":
     app.run(debug=True)
