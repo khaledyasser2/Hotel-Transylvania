@@ -135,7 +135,7 @@ margin-right: 4px;
     <p id="description">Please select a date to make your reservation!</p>
     <label for="date">Select a date:</label>
     <input name="date" id="date" type="date" value="2023-01-7" min="2023-01-7" max="2025-12-31">
-    <input name="room" id="room" type="number" placeholder="Desired Room Number">
+    <input name="room" id="room" type="number" placeholder="Desired Room Number" min="1" max="999">
     <input type="submit" id="submit"></input>
   </form>
   <script src="{{ url_for('static',filename='js/booking.js') }}"></script>
