@@ -133,7 +133,6 @@ def book():
         try:
             db.session.add(booking)
             db.session.commit()
-
         except Exception as e:
             print(e)
             return redirect("/book")
