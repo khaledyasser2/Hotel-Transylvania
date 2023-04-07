@@ -1,2 +1,1 @@
-This is the software engineering project
-Yaaaay
+Basic hotel reservation website developed for 2022 Softwar Engineering course at Waseda
