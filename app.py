@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, make_response
 from flask_sqlalchemy import SQLAlchemy
 
+
+
+
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///Database.db'
 db=SQLAlchemy(app)
